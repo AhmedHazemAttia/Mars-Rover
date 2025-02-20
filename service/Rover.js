@@ -32,10 +32,6 @@
 class Rover {
     constructor(x = 0, y = 0, orientation = "north") {
         this.directions = {
-            f: "forward",
-            b: "backward",
-            r: "right",
-            l: "left",
             n: "north",
             s: "south",
             w: "west",
