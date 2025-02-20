@@ -15,11 +15,14 @@ http://localhost:3000/rover
 use the above API and add the in the body the designated coordinates (x, y) followed by the direction
 
 body Example: 
-
+```sh
 {
   "x": 4,
   "y": 2,
   "direction": "East"
 }
-
-result should be (6,4, North) 
+```
+result should be
+```sh
+ (6,4, North) 
+ ```
