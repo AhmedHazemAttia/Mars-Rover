@@ -3,13 +3,15 @@
 The Rover will be able to get its directions using the /rover endpoint with designated coordinates (x, y) followed by the direction (North, South, East, West).
 
 ## Starting the server
-cd to serverAPI and run: 
+Navigate to the `serverAPI` directory and run:  
+```sh
 node server.js
+```
 
-# API Endpoint:
+## API Endpoint:
 http://localhost:3000/rover
 
-# Postman
+## Postman
 use the above API and add the in the body the designated coordinates (x, y) followed by the direction
 
 body Example: 
