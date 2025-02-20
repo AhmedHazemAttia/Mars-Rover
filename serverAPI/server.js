@@ -8,13 +8,13 @@ app.use(cors())
 
 
 app.post("/rover", (req, res) => {
-    const { x, y, direction, commands } = req.body;
+    const { x, y, orientation, commands } = req.body;
 
     if (typeof x !== "number" || typeof y !== "number" || typeof commands !== "string") {
         return res.status(400).json({ error: "Invalid input" });
     }
 
-    const rover = new Rover(x, y, direction);
+    const rover = new Rover(x, y, orientation);
     const result = rover.processCommands(commands);
     res.json(result);
 });
