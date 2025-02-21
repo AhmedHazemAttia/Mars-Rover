@@ -67,6 +67,9 @@ class Rover {
                 if (this.orientation === "s") this.y++;
                 if (this.orientation === "e") this.x--;
                 if (this.orientation === "w") this.x++;
+                if (this.obstacle.some(([ox, oy]) => ox === this.x && oy === this.y)) {
+                    this.stop = true;
+                }
                 break;
             case "R":
                 this.orientation = this.rotateRight();
@@ -96,26 +99,19 @@ class Rover {
             orientation: this.directions[this.orientation] 
         };
     }
-    // getXY(){
-    //     return {
-    //         x: this.x,
-    //         y: this.y}
-
-    // }
-
     processCommands(commands) {
         for (let command of commands) {
             this.move(command);
-            if(this.stop) return 'stoped'
+            if (this.stop) {
+                return { 
+                    status: "stopped", 
+                    message: "Rover encountered an obstacle and stopped.", 
+                    position: { x: this.x, y: this.y, orientation: this.directions[this.orientation] }
+                };
+            }
         }
-        return this.getPosition()
+        return this.getPosition();
     }
 }
-
-const obstacle = [[6,5], [3,5], [7,4]]
-const rover = new Rover(4,2,"east", obstacle)
-const cmd = "FLFFFRFLB"
-
-console.log(rover.processCommands(cmd))
 
 module.exports = Rover;
