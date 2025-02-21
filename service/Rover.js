@@ -51,35 +51,42 @@ class Rover {
     }
 
     move(cmd) {
+        let newX = this.x;
+        let newY = this.y;
 
         switch (cmd) {
             case "F":
-                if (this.orientation === "n") this.y++;
-                if (this.orientation === "s") this.y--;
-                if (this.orientation === "e") this.x++;
-                if (this.orientation === "w") this.x--;
-                if (this.obstacle.some(([ox, oy]) => ox === this.x && oy === this.y)) {
-                    this.stop = true;
-                }
+                if (this.orientation === "n") newY++;
+                if (this.orientation === "s") newY--;
+                if (this.orientation === "e") newX++;
+                if (this.orientation === "w") newX--;
                 break;
             case "B":
-                if (this.orientation === "n") this.y--;
-                if (this.orientation === "s") this.y++;
-                if (this.orientation === "e") this.x--;
-                if (this.orientation === "w") this.x++;
-                if (this.obstacle.some(([ox, oy]) => ox === this.x && oy === this.y)) {
-                    this.stop = true;
-                }
+                if (this.orientation === "n") newY--;
+                if (this.orientation === "s") newY++;
+                if (this.orientation === "e") newX--;
+                if (this.orientation === "w") newX++;
                 break;
             case "R":
                 this.orientation = this.rotateRight();
-                break;
+                return;
             case "L":
                 this.orientation = this.rotateLeft();
-                break;
+                return;
             default:
                 console.log("Invalid Cmd");
+                return;
         }
+
+        // Check if the new position would have an obstacle
+        if (this.obstacle.some(([ox, oy]) => ox === newX && oy === newY)) {
+            this.stop = true;
+            return;
+        }
+
+        // Move only if there's no obstacle and updates the params 
+        this.x = newX;
+        this.y = newY;
     }
 
     rotateRight() {
