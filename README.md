@@ -12,17 +12,33 @@ node server.js
 http://localhost:3000/rover
 
 ## Postman
-use the above API and add the in the body the designated coordinates (x, y) followed by the direction
+use the above API and add the in the body the designated coordinates (x, y) followed by the direction and reported obstacles 
 
 body Example: 
 ```sh
-{
-  "x": 4,
-  "y": 2,
-  "direction": "East"
+{ 
+    "x": 4,
+    "y": 2,
+    "orientation": "east",
+    "commands": "FLFFFRFLB",
+    "obstacles" : [[6,5], [3,5], [7,4]]
 }
 ```
-result should be
+in case no obstacle invloved in movements:
 ```sh
  (6,4, North) 
  ```
+
+and if one of the moves will encounter an obstacle: 
+
+```sh
+{
+    "status": "stopped",
+    "message": "Rover encountered an obstacle and stopped.",
+    "position": {
+        "x": 5,
+        "y": 5,
+        "orientation": "east"
+    }
+}
+```
