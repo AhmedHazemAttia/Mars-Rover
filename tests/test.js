@@ -52,4 +52,21 @@ describe("Mars Rover", () => {
         rover.processCommands("FF");
         expect(rover.getPosition()).toEqual({ x: -2, y: 0, orientation: "west" });
     });
+
+    test("should report if the next move will be an obstacle", () => {
+        const obstacle = [[6,5], [3,5], [7,4]];
+        const rover = new Rover(4,2,"east", obstacle);
+        
+        const result = rover.processCommands("FLFFFRFLB");
+    
+        expect(result).toEqual({
+            "status": "stopped",
+            "message": "Rover encountered an obstacle and stopped.",
+            "position": {
+                "x": 5,
+                "y": 5,
+                "orientation": "east"
+            }
+        });
+    });
 });
