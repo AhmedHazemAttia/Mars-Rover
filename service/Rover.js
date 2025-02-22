@@ -28,92 +28,77 @@
 
 
 
-
 class Rover {
-    constructor(x = 0, y = 0, orientation = "north", obstacle = []) {
-        this.directions = {
-            n: "north",
-            s: "south",
-            w: "west",
-            e: "east"
+    constructor(x = 0, y = 0, orientation = "north", obstacles = []) {
+        this.directions = ["n", "e", "s", "w"];
+        this.directionMap = {
+            north: "n",
+            south: "s",
+            west: "w",
+            east: "e"
+        };
+        this.movementMap = {
+            n: { F: [0, 1], B: [0, -1] },
+            s: { F: [0, -1], B: [0, 1] },
+            e: { F: [1, 0], B: [-1, 0] },
+            w: { F: [-1, 0], B: [1, 0] }
         };
 
-        this.x = x;  
-        this.y = y; 
-
-       
-        this.orientation = Object.keys(this.directions).find(
-            key => this.directions[key] === orientation.toLowerCase()
-        ) || "n"; 
-
-        this.obstacle = obstacle
-        this.stop = false
+        this.x = x;
+        this.y = y;
+        this.orientation = this.directionMap[orientation.toLowerCase()] || "n";
+        this.obstacles = obstacles;
+        this.stop = false;
     }
 
     move(cmd) {
-        let newX = this.x;
-        let newY = this.y;
-
-        switch (cmd) {
-            case "F":
-                if (this.orientation === "n") newY++;
-                if (this.orientation === "s") newY--;
-                if (this.orientation === "e") newX++;
-                if (this.orientation === "w") newX--;
-                break;
-            case "B":
-                if (this.orientation === "n") newY--;
-                if (this.orientation === "s") newY++;
-                if (this.orientation === "e") newX--;
-                if (this.orientation === "w") newX++;
-                break;
-            case "R":
-                this.orientation = this.rotateRight();
-                return;
-            case "L":
-                this.orientation = this.rotateLeft();
-                return;
-            default:
-                console.log("Invalid Cmd");
-                return;
+        if (cmd in this.movementMap[this.orientation]) {
+            const [dx, dy] = this.movementMap[this.orientation][cmd];
+            this.updatePosition(dx, dy);
+        } else if (cmd === "R" || cmd === "L") {
+            this.rotate(cmd);
+        } else {
+            console.log("Invalid Command");
         }
+    }
 
-        // Check if the new position would have an obstacle
-        if (this.obstacle.some(([ox, oy]) => ox === newX && oy === newY)) {
+    updatePosition(dx, dy) {
+        const newX = this.x + dx;
+        const newY = this.y + dy;
+
+        if (this.obstacles.some(([ox, oy]) => ox === newX && oy === newY)) {
             this.stop = true;
             return;
         }
 
-        // Move only if there's no obstacle and updates the params 
         this.x = newX;
         this.y = newY;
     }
 
-    rotateRight() {
-        const direction = ["n", "e", "s", "w"];
-        return direction[(direction.indexOf(this.orientation) + 1) % 4];
-    }
-
-    rotateLeft() {
-        const direction = ["n", "w", "s", "e"];
-        return direction[(direction.indexOf(this.orientation) + 1) % 4];
+    rotate(direction) {
+        const indexChange = direction === "R" ? 1 : -1;
+        const currentIndex = this.directions.indexOf(this.orientation);
+        this.orientation = this.directions[(currentIndex + indexChange + 4) % 4];
     }
 
     getPosition() {
         return {
             x: this.x,
             y: this.y,
-            orientation: this.directions[this.orientation] 
+            orientation: Object.keys(this.directionMap).find(
+                key => this.directionMap[key] === this.orientation
+            )
         };
     }
+
     processCommands(commands) {
         for (let command of commands) {
             this.move(command);
             if (this.stop) {
-                return { 
-                    status: "stopped", 
-                    message: "Rover encountered an obstacle and stopped.", 
-                    position: { x: this.x, y: this.y, orientation: this.directions[this.orientation] }
+                return {
+                    status: "stopped",
+                    message: "Rover encountered an obstacle and stopped.",
+                    position: this.getPosition()
                 };
             }
         }
